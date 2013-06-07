@@ -1,0 +1,38 @@
+#!/bin/bash
+
+function fixcfg()
+{
+	# handle nonconfigurable application config
+	if [ -z "$(grep 'VICTIMS_CONFIG' $OPENSHIFT_DATA_DIR/victims-web/src/victims_web/application.py)"  ]; then
+		cp $OPENSHIFT_REPO_DIR/config/victimsweb.cfg $OPENSHIFT_REPO_DIR/libs/victims_web/application.cfg
+	fi
+}
+
+source $OPENSHIFT_REPO_DIR/config/victimsweb.build.env
+if [ ! -d $OPENSHIFT_REPO_DIR/libs/victims_web ]; then
+	if [ -d $OPENSHIFT_DATA_DIR/victims-web ]; then
+		ORIGINAL=$(cd $OPENSHIFT_DATA_DIR/victims-web && git config remote.origin.url)
+		if [ "$ORIGINAL" != "$VICTIMS_GIT_URL" ]; then
+			VICTIMS_GIT_CLEAN=1
+		fi
+	fi
+	if [ $VICTIMS_GIT_CLEAN -eq 1 ]; then
+		rm -rf $OPENSHIFT_DATA_DIR/victims-web
+	fi
+	if [ ! -d $OPENSHIFT_DATA_DIR/victims-web ]; then
+		git clone $VICTIMS_GIT_URL $OPENSHIFT_DATA_DIR/victims-web
+	fi
+	(cd $OPENSHIFT_DATA_DIR/victims-web && git checkout $VICTIMS_GIT_BRANCH)
+	(cd $OPENSHIFT_DATA_DIR/victims-web && git pull --rebase)
+	cp -R $OPENSHIFT_DATA_DIR/victims-web/src/victims_web $OPENSHIFT_REPO_DIR/libs/.
+	cp -R $OPENSHIFT_DATA_DIR/victims-web/src/victims_web/blueprints/ui/static $OPENSHIFT_REPO_DIR/wsgi/.
+	fixcfg
+fi
+
+PYDIR=$(find $OPENSHIFT_HOMEDIR -maxdepth 1 -type d -name "python*" | sort | tail -n 1)
+if [ -f $PYDIR/virtenv/bin/activate ]; then
+	source $PYDIR/virtenv/bin/activate
+	if type -p pip > /dev/null; then
+		pip install --use-mirrors -e $OPENSHIFT_DATA_DIR/victims-web
+	fi
+fi
