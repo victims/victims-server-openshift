@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# This file is part of victims-web.
+# This file is part of victims-server-openshift.
 #
 # Copyright (C) 2013 The Victims Project
 #
@@ -23,10 +23,10 @@ Source build and installation script.
 from setuptools import setup
 
 setup(
-    name='victims_web_openshift',
-    version='2.0.0.BETA',
-    description='The openshift app for the victi.ms webservice',
-    author='Steve Milner',
+    name='victims_server_openshift',
+    version='1.0.0',
+    description='The Open Shift app for the victi.ms webservice',
+    author='Arun Babu Neelicattu',
     url='http://www.victi.ms',
 
     install_requires=['pymongo>=2.5.2'],
