@@ -29,6 +29,6 @@ setup(
     author='Arun Babu Neelicattu',
     url='http://www.victi.ms',
 
-    install_requires=['pymongo>=2.5.2'],
+    install_requires=[],
 )
 
