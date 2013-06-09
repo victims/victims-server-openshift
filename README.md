@@ -13,12 +13,12 @@ This repo allows you to deploy a new instance of the victims-web server on opens
 #### One Shot Deployment
 This is pretty straight forward, run the following command. The app should be deployed to ```http://victims-NAMESPACE.rhcloud.com```. See bottom for a sample output.
 ```sh
-rhc app create victims mongodb-2.2 rockmongo-1.1 python-2.6 --from-code git://github.com/victims/victims-server-openshift.git
+rhc app create victims mongodb-2.2 rockmongo-1.1 python-2.7 --from-code git://github.com/victims/victims-server-openshift.git
 ```
 #### Alternative Deployment
 This can be useful if the *One Shot* option fails or if you want to configure the instance from build 1.
 ```sh
-rhc app create victims mongodb-2.2 rockmongo-1.1 python-2.6
+rhc app create victims mongodb-2.2 rockmongo-1.1 python-2.7
 cd victims
 git remote add upstream -m master git://github.com/victims/victims-server-openshift.git
 git pull -s recursive -X theirs upstream master
@@ -46,11 +46,11 @@ We use ```configs/victimsweb.build.env``` file for doing a few build time tricks
 
 ### Sample creation output
 ```sh
-$ rhc app create victims mongodb-2.2 python-2.6 --from-code git://github.com/victims/victims-server-openshift.git
+$ rhc app create victims mongodb-2.2 python-2.7 --from-code git://github.com/victims/victims-server-openshift.git
 Application Options
 -------------------
   Namespace:   abn
-  Cartridges:  mongodb-2.2, python-2.6
+  Cartridges:  mongodb-2.2, python-2.7
   Source Code: git://github.com/victims/victims-server-openshift.git
   Gear Size:   default
   Scaling:     no
@@ -73,13 +73,13 @@ victims @ http://victims-abn.rhcloud.com/ (uuid: **********************)
   Initial Git URL: git://github.com/victims/victims-server-openshift.git
   SSH:             $UID@victims-abn.rhcloud.com
 
-  python-2.6 (Python 2.6)
+  python-2.7 (Python 2.7)
   -----------------------
     Gears: Located with mongodb-2.2
 
   mongodb-2.2 (MongoDB NoSQL Database 2.2)
   ----------------------------------------
-    Gears:          Located with python-2.6
+    Gears:          Located with python-2.7
     Connection URL: mongodb://$OPENSHIFT_MONGODB_DB_HOST:$OPENSHIFT_MONGODB_DB_PORT/
     Database Name:  victims
     Password:       ***********
