@@ -42,8 +42,8 @@ if [ -f ${PYDIR}/virtenv/bin/activate ]; then
 		source $PYDIR/activate_virtenv
 	else
 		echo "[build] activate_virtenv not found, falling back to manual"
-		export LD_LIBRARY_PATH="${PYDIR}/opt/lib:\${LD_LIBRARY_PATH}" 
-		export LIBRARY_PATH="${PYDIR}/opt/lib:\${LIBRARY_PATH}" 
+		export LD_LIBRARY_PATH="${PYDIR}/opt/lib:${LD_LIBRARY_PATH}" 
+		export LIBRARY_PATH="${PYDIR}/opt/lib:${LIBRARY_PATH}" 
 		source ${PYDIR}/bin/source_env_vars
 		source ${PYDIR}/virtenv/bin/activate
 	fi
