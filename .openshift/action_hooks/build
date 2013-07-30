@@ -36,11 +36,16 @@ if [ ! -d $OPENSHIFT_REPO_DIR/libs/victims_web ]; then
 fi
 
 PYDIR=$(find $OPENSHIFT_HOMEDIR -maxdepth 1 -type d -name "python*" | sort | tail -n 1)
-if [ -f $PYDIR/virtenv/bin/activate ]; then
-	if [ -f $PYDIR/activate_virtenv ]; then
+if [ -f ${PYDIR}/virtenv/bin/activate ]; then
+	echo "[build] Activating python environment"
+	if [ -f ${PYDIR}/activate_virtenv ]; then
 		source $PYDIR/activate_virtenv
 	else
-		source $PYDIR/virtenv/bin/activate
+		echo "[build] activate_virtenv not found, falling back to manual"
+		export LD_LIBRARY_PATH="${PYDIR}/opt/lib:\${LD_LIBRARY_PATH}" 
+		export LIBRARY_PATH="${PYDIR}/opt/lib:\${LIBRARY_PATH}" 
+		source ${PYDIR}/bin/source_env_vars
+		source ${PYDIR}/virtenv/bin/activate
 	fi
 	if type -p pip > /dev/null; then
 		echo "[build] Installing dependencies for victims-web"
