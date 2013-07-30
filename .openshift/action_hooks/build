@@ -37,7 +37,11 @@ fi
 
 PYDIR=$(find $OPENSHIFT_HOMEDIR -maxdepth 1 -type d -name "python*" | sort | tail -n 1)
 if [ -f $PYDIR/virtenv/bin/activate ]; then
-	source $PYDIR/virtenv/bin/activate
+	if [ -f $PYDIR/activate_virtenv ]; then
+		source $PYDIR/activate_virtenv
+	else
+		source $PYDIR/virtenv/bin/activate
+	fi
 	if type -p pip > /dev/null; then
 		echo "[build] Installing dependencies for victims-web"
 		pip install --use-mirrors -e $OPENSHIFT_DATA_DIR/victims-web
