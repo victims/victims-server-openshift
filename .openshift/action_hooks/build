@@ -24,7 +24,7 @@ if [ ! -d "${VICTIMS_LIB}" ]; then
         echo "[build] Switching to branch $VICTIMS_GIT_BRANCH"                   
         (cd $VICTIMS_REPO && git checkout $VICTIMS_GIT_BRANCH)                   
         echo "[build] Fetching any updates for victims-web"                      
-        (cd $VICTIMS_REPO && git pull --rebase)                                  
+        (cd $VICTIMS_REPO && git pull --rebase origin $VICTIMS_GIT_BRANCH)                                  
         echo "[build] Copying over victims-web contents to app repo"             
         ln -sf $VICTIMS_MODULE $VICTIMS_LIB                                      
 fi                                                                               
