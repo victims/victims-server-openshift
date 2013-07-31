@@ -15,6 +15,10 @@ This is pretty straight forward, run the following command. The app should be de
 ```sh
 rhc app create victims mongodb-2.2 rockmongo-1.1 python-2.7 --from-code git://github.com/victims/victims-server-openshift.git
 ```
+_*Note:*_ The above can be used for development purposes and will be deployed on a shared gear. This cannot be used with ```--scaling``` as _rockmongo_ cannot be scaled. If you want to deploy with scaling enabled, use:
+```sh
+rhc app create victims mongodb-2.2 python-2.7 --scaling --from-code git://github.com/victims/victims-server-openshift.git
+```
 If you'd like to merge in any upstream changes as they are available, you need to configure remote/upstream. This can be done as follows:
 ```sh
 git remote add upstream https://github.com/victims/victims-server-openshift.git
