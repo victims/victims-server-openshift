@@ -15,6 +15,10 @@ This is pretty straight forward, run the following command. The app should be de
 ```sh
 rhc app create victims mongodb-2.2 rockmongo-1.1 python-2.7 --from-code git://github.com/victims/victims-server-openshift.git
 ```
+If you'd like to merge in any upstream changes as they are available, you need to configure remote/upstream. This can be done as follows:
+```sh
+git remote add upstream https://github.com/victims/victims-server-openshift.git
+```
 #### Alternative Deployment
 This can be useful if the *One Shot* option fails or if you want to configure the instance from build 1.
 ```sh
@@ -25,6 +29,13 @@ git pull -s recursive -X theirs upstream master
 # Make any configuration changes here and commit them.
 git push origin master
 ```
+### Merging upstream changes
+Changes from upstream for the openshift wrapper app can be merged in and the app redeployed by executing:
+```sh
+git pull --rebase upstream master
+git push origin master
+```
+_Note:_ This requires remote/usptream to be configured. (See above)
 ### Importing data
 1. Get the app's SSH address by running ```rhc app show victims```
 2. SSH into the server.
@@ -37,6 +48,7 @@ mongoimport -d $OPENSHIFT_APP_NAME -c hashes --type json --file $OPENSHIFT_DATA_
 ### Configuring the deploytment
 #### Application Configuration
 Any application configuration can be pushed by changing the ```configs/victimsweb.cfg``` file in the repo. This will be used instead of the ```application.cfg``` provided by victims-web.
+Alternatively, a file ```$OPENSHIFT_DATA_DIR/victimsweb.cfg``` can be created so that the application uses this instead of ```configs/victimsweb.cfg```.
 #### Build Hook Configuration
 We use ```configs/victimsweb.build.env``` file for doing a few build time tricks. This file is sourced before a the build hook executes.
 
