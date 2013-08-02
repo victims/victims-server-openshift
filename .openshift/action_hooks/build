@@ -1,52 +1,59 @@
 #!/bin/bash                                                                      
                                                                                  
-BUILD_CFG=$OPENSHIFT_REPO_DIR/config/victimsweb.build.env                        
-VICTIMS_REPO=$OPENSHIFT_DATA_DIR/victims-web                                     
-VICTIMS_MODULE=$VICTIMS_REPO/src/victims_web                                     
-VICTIMS_LIB=$OPENSHIFT_REPO_DIR/libs/victims_web                                 
-                                                                                 
-source $BUILD_CFG                                                                
-if [ ! -d "${VICTIMS_LIB}" ]; then                                               
-        if [ -d "${VICTIMS_REPO}" ]; then                                        
-                ORIGINAL=$(cd $VICTIMS_REPO && git config remote.origin.url)     
-                if [ "$ORIGINAL" != "$VICTIMS_GIT_URL" ]; then                   
-                        VICTIMS_GIT_CLEAN=1                                      
-                fi                                                               
-        fi                                                                       
-        if [ $VICTIMS_GIT_CLEAN -eq 1 ]; then                                    
-                echo "[build] Deleting old checkout of victims-web"              
-                rm -rf $VICTIMS_REPO                                             
-        fi                                                                       
-        if [ ! -d $VICTIMS_REPO ]; then                                          
-                echo "[build] Cloning victims-web from $VICTIMS_GIT_URL"         
-                git clone $VICTIMS_GIT_URL $VICTIMS_REPO                         
-        fi                                                                       
-        echo "[build] Switching to branch $VICTIMS_GIT_BRANCH"                   
-        (cd $VICTIMS_REPO && git checkout $VICTIMS_GIT_BRANCH)                   
-        echo "[build] Fetching any updates for victims-web"                      
-        (cd $VICTIMS_REPO && git pull --rebase origin $VICTIMS_GIT_BRANCH)                                  
-        echo "[build] Copying over victims-web contents to app repo"             
-        ln -sf $VICTIMS_MODULE $VICTIMS_LIB                                      
-fi                                                                               
-                                                                                 
+BUILD_CFG=$OPENSHIFT_REPO_DIR/config/victimsweb.build.env
+VICTIMS_REPO=$OPENSHIFT_DATA_DIR/victims-web
+VICTIMS_MODULE=$VICTIMS_REPO/src/victims_web
+VICTIMS_LIB=$OPENSHIFT_REPO_DIR/libs/victims_web
+
+source $BUILD_CFG
+
+# Check if we need to reclone the repo
+if [ -d "${VICTIMS_REPO}" ]; then
+        ORIGINAL=$(cd $VICTIMS_REPO && git config remote.origin.url)
+        if [ "$ORIGINAL" != "$VICTIMS_GIT_URL" ]; then
+                VICTIMS_GIT_CLEAN=1
+        fi
+fi
+
+# Clean the repo if required
+if [ $VICTIMS_GIT_CLEAN -eq 1 ]; then
+        echo "[build] Deleting old checkout of victims-web"
+        rm -rf $VICTIMS_REPO
+fi
+
+# Clone the repo if not already exists
+if [ ! -d $VICTIMS_REPO ]; then
+        echo "[build] Cloning victims-web from $VICTIMS_GIT_URL"
+        git clone $VICTIMS_GIT_URL $VICTIMS_REPO
+fi
+
+# Branching and updates
+echo "[build] Switching to branch $VICTIMS_GIT_BRANCH"
+(cd $VICTIMS_REPO && git checkout $VICTIMS_GIT_BRANCH)
+echo "[build] Fetching any updates for victims-web"
+(cd $VICTIMS_REPO && git pull --rebase origin $VICTIMS_GIT_BRANCH)
+echo "[build] Copying over victims-web contents to app repo"
+ln -sf $VICTIMS_MODULE $VICTIMS_LIB
+
+
 PYDIR=$(find $OPENSHIFT_HOMEDIR -maxdepth 1 -type d -name "python*" | sort | tail -n 1)
-if [ -f ${PYDIR}/virtenv/bin/activate ]; then                                    
-        echo "[build] Activating python environment"                             
-        if [ -f ${PYDIR}/activate_virtenv ]; then                                
-                source $PYDIR/activate_virtenv                                   
-        else                                                                     
+if [ -f ${PYDIR}/virtenv/bin/activate ]; then
+        echo "[build] Activating python environment"
+        if [ -f ${PYDIR}/activate_virtenv ]; then
+                source $PYDIR/activate_virtenv
+        else
                 echo "[build] activate_virtenv not found, falling back to manual"
-                export LD_LIBRARY_PATH="${PYDIR}/opt/lib:${LD_LIBRARY_PATH}"     
-                export LIBRARY_PATH="${PYDIR}/opt/lib:${LIBRARY_PATH}"           
-                source ${PYDIR}/bin/source_env_vars                              
-                source ${PYDIR}/virtenv/bin/activate                             
-        fi                                                                       
-        if type -p pip > /dev/null; then                                         
-                echo "[build] Installing dependencies for victims-web"           
-                pip install --use-mirrors -e $VICTIMS_REPO                       
-        else                                                                     
+                export LD_LIBRARY_PATH="${PYDIR}/opt/lib:${LD_LIBRARY_PATH}"
+                export LIBRARY_PATH="${PYDIR}/opt/lib:${LIBRARY_PATH}"
+                source ${PYDIR}/bin/source_env_vars
+                source ${PYDIR}/virtenv/bin/activate
+        fi
+        if type -p pip > /dev/null; then
+                echo "[build] Installing dependencies for victims-web"
+                pip install --use-mirrors -e $VICTIMS_REPO
+        else
                 echo "[build] Could not find pip in environment. Skipping dependency install"
-        fi                                                                       
-else                                                                             
+        fi
+else
         echo "[build] Could not activate vitualenv to perform dependency installs"
 fi
