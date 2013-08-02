@@ -3,11 +3,14 @@
 BUILD_CFG=$OPENSHIFT_REPO_DIR/config/victimsweb.build.env
 VICTIMS_REPO=$OPENSHIFT_DATA_DIR/victims-web
 
-source $BUILD_CFG
-
-# pull in any upstream changes
-echo "[pre-start-py27] Updating local victims-web branch"
-(cd $VICTIMS_REPO && git pull --rebase origin $VICTIMS_GIT_BRANCH)
+if [ -d ${VICTIMS_REPO} ]; then
+	source $BUILD_CFG
+	# pull in any upstream changes
+	echo "[pre-start-py27] Updating local victims-web branch"
+	(cd $VICTIMS_REPO && git pull --rebase origin $VICTIMS_GIT_BRANCH)
+else
+	source $OPENSHIFT_REPO_DIR/config/lib-setup
+fi
 
 # update existing dependencies and install new ones
 echo "[pre-start-py27] Updating dependencies"
