@@ -1,17 +1,54 @@
 #! /bin/bash
 
+# Setup globals
+LOG_PREFIX="[pre-start]"
+PIP_LOG=${OPENSHIFT_PYTHON_LOG_DIR}/pip.log
 VICTIMS_ENV=${OPENSHIFT_REPO_DIR}/config/victimsweb.env
-
-source ${VICTIMS_ENV}
-
-PIP_URL=$(echo $VICTIMS_GIT_URL | sed s/'.git$'/''/)/tarball/${VICTIMS_GIT_BRANCH}
+VICTIMS_LOCAL_REPO=${OPENSHIFT_DATA_DIR}/victims-web
+VICTIMS_LOCAL_MODULE=${VICTIMS_LOCAL_REPO}/src/victims_web
 
 # activate virtenv
-echo "[pre-start] Activating virtenv ..."
+echo "$LOG_PREFIX Activating virtenv ..."
 source ${OPENSHIFT_PYTHON_DIR}/bin/activate_virtenv
+source ${VICTIMS_ENV}
+
+# Uninstall the previous install of victims-web
+echo "$LOG_PREFIX Removing any older reference to victims-web"
+pip uninstall --yes victims-web >> ${PIP_LOG} 2>&1 || echo "$LOG_PREFIX victims-web not found."
+
+# Check if the upstream url has changed
+if [ -d ${VICTIMS_LOCAL_REPO} ]; then
+    ORIGINAL=$(cd ${VICTIMS_LOCAL_REPO} && git config remote.origin.url)
+    if [ "$ORIGINAL" != "$VICTIMS_GIT_URL" ]; then
+        VICTIMS_GIT_CLEAN=1
+    fi
+fi
+
+# Clean the repo if required
+if [ ! -z $VICTIMS_GIT_CLEAN ]; then
+    echo "$LOG_PREFIX Deleting old checkout of victims-web"
+    rm -rf ${VICTIMS_LOCAL_REPO}
+fi
+
+# Clone the repo if not already exists
+if [ ! -d ${VICTIMS_LOCAL_REPO} ]; then
+    echo "$LOG_PREFIX Cloning victims-web from $VICTIMS_GIT_URL"
+    git clone $VICTIMS_GIT_URL ${VICTIMS_LOCAL_REPO}
+fi
+
+if [ -z ${SKIP_SWITCH} ]; then
+    # Switch only if SKIP_SWITCH is not defined
+    echo "$LOG_PREFIX Switching to branch ${VICTIMS_GIT_BRANCH}"
+    (cd ${VICTIMS_LOCAL_REPO} && git checkout ${VICTIMS_GIT_BRANCH})
+    (cd ${VICTIMS_LOCAL_REPO} && git pull --rebase origin ${VICTIMS_GIT_BRANCH})
+else
+    echo "$LOG_PREFIX Skipping branch switching"
+fi
 
 # reinstall victims-web on start
-pip uninstall victims-web || echo "[pre-start] No victims-web module found"
-echo "[pre-start] Installing victims-web ..."
-pip install -U ${PIP_URL}
-echo "[pre-start] Installation complete!"
+echo "$LOG_PREFIX Updating dependencies for victims-web ..."
+pip install --use-mirrors -e ${VICTIMS_LOCAL_REPO} >> ${PIP_LOG} 2>&1
+echo "$LOG_PREFIX Update complete complete!"
+
+echo "$LOG_PREFIX Adding link to cartridge lib"
+ln -sf ${VICTIMS_LOCAL_MODULE} ${OPENSHIFT_REPO_DIR}/libs/victims_web

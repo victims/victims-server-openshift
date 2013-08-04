@@ -39,7 +39,9 @@ if not os.path.exists(config_file):
     config_file = os.path.join(
         os.environ['OPENSHIFT_REPO_DIR'], 'config', 'victimsweb.cfg')
 os.environ['VICTIMS_CONFIG'] = config_file
+os.environ['VICTIMS_LOG_DIR'] = os.environ['OPENSHIFT_PYTHON_LOG_DIR']
 
 # Start the application
 from victims_web.application import app as application
-application.run(host=os.environ['OPENSHIFT_PYTHON_IP'], port=int(os.environ['OPENSHIFT_PYTHON_PORT']))
+application.run(host=os.environ['OPENSHIFT_PYTHON_IP'],
+                port=int(os.environ['OPENSHIFT_PYTHON_PORT']))
