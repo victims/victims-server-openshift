@@ -1,14 +1,13 @@
 #! /usr/bin/bash
 
-BUILD_CFG=$OPENSHIFT_REPO_DIR/config/victimsweb.build.env
-VICTIMS_REPO=$OPENSHIFT_DATA_DIR/victims-web
+VICTIMS_ENV=${OPENSHIFT_REPO_DIR}/conf/victimsweb.env
 
-source $BUILD_CFG
+source ${VICTIMS_ENV}
 
-# pull in any upstream changes
-echo "[pre-start-py27] Updating local victims-web branch"
-(cd $VICTIMS_REPO && git pull --rebase origin $VICTIMS_GIT_BRANCH)
+PIP_URL=$(echo $VICTIMS_GIT_URL | sed s/'.git$'/''/)/tarball/${VICTIMS_GIT_BRANCH}
 
-# update existing dependencies and install new ones
-echo "[pre-start-py27] Updating dependencies"
-pip install --use-mirrors -e $VICTIMS_REPO
+# reinstall victims-web on start
+pip uninstall victims-web || echo "[pre-start] No victims-web module found"
+echo "[pre-start] Installing victims-web ..."
+pip install -U ${PIP_URL}
+echo "[pre-start] Installation complete!"
