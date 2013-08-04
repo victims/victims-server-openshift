@@ -1,10 +1,14 @@
-#! /usr/bin/bash
+#! /bin/bash
 
 VICTIMS_ENV=${OPENSHIFT_REPO_DIR}/config/victimsweb.env
 
 source ${VICTIMS_ENV}
 
 PIP_URL=$(echo $VICTIMS_GIT_URL | sed s/'.git$'/''/)/tarball/${VICTIMS_GIT_BRANCH}
+
+# activate virtenv
+echo "[pre-start] Activating virtenv ..."
+source ${OPENSHIFT_PYTHON_DIR}/bin/activate_virtenv
 
 # reinstall victims-web on start
 pip uninstall victims-web || echo "[pre-start] No victims-web module found"
