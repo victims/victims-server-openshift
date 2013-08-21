@@ -39,6 +39,7 @@ fi
 if [ -z ${SKIP_SWITCH} ]; then
     # Switch only if SKIP_SWITCH is not defined
     echo "$LOG_PREFIX Switching to branch ${VICTIMS_GIT_BRANCH}"
+    (cd ${VICTIMS_LOCAL_REPO} && git fetch)
     (cd ${VICTIMS_LOCAL_REPO} && git checkout ${VICTIMS_GIT_BRANCH})
     (cd ${VICTIMS_LOCAL_REPO} && git pull --rebase origin ${VICTIMS_GIT_BRANCH})
 else
