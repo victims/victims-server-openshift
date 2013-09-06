@@ -9,7 +9,16 @@ VICTIMS_LOCAL_MODULE=${VICTIMS_LOCAL_REPO}/src/victims_web
 
 # activate virtenv
 echo "$LOG_PREFIX Activating virtenv ..."
-source ${OPENSHIFT_PYTHON_DIR}/bin/activate_virtenv
+
+if [ -f "${OPENSHIFT_PYTHON_DIR}/bin/activate_virtenv" ]; then
+    source ${OPENSHIFT_PYTHON_DIR}/bin/activate_virtenv
+elif [ -f "${OPENSHIFT_PYTHON_DIR}/virtenv/bin/activate" ]; then
+    source ${OPENSHIFT_PYTHON_DIR}/virtenv/bin/activate
+else
+    echo "$LOG_PREFIX Could not activate virtual environment"
+    exit 1
+fi
+
 source ${VICTIMS_ENV}
 
 # Uninstall the previous install of victims-web
