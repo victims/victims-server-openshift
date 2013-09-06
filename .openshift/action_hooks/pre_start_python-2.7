@@ -58,6 +58,11 @@ fi
 # reinstall victims-web on start
 echo "$LOG_PREFIX Updating dependencies for victims-web ..."
 pip install --use-mirrors -e ${VICTIMS_LOCAL_REPO} >> ${PIP_LOG} 2>&1
+
+# Workaround for Flask-Admin-1.0.6/Flask-WTF-0.9.1 incompatibility
+echo "$LOG_PREFIX Applying Flask-Admin version fix ..."
+pip install "https://github.com/mrjoes/flask-admin/tarball/f164aeb/#egg=Flask-Admin-1.0.7dev"
+
 echo "$LOG_PREFIX Update complete complete!"
 
 echo "$LOG_PREFIX Adding link to cartridge lib"
