@@ -29,5 +29,7 @@ setup(
     author='Arun Babu Neelicattu',
     url='http://www.victi.ms',
 
-    install_requires=[],
+    install_requires=[
+        'uwsgi',
+    ],
 )

@@ -67,3 +67,6 @@ echo "$LOG_PREFIX Update complete complete!"
 
 echo "$LOG_PREFIX Adding link to cartridge lib"
 ln -sf ${VICTIMS_LOCAL_MODULE} ${OPENSHIFT_REPO_DIR}/libs/.
+
+# start uwsgi
+exec ${OPENSHIFT_REPO_DIR}/bin/control restart
