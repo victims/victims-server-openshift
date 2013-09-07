@@ -60,6 +60,33 @@ We use ```configs/victimsweb.build.env``` file for doing a few build time tricks
 2. Specify your fork: This can be done by setting ```VICTIMS_GIT_URL``` to your repository url. This will delete any existing checkout.
 3. Clean checkout: You can request this by setting ```VICTIMS_GIT_CLEAN=0``` to ```1```.
 
+#### HA-Proxy Configuration
+*Enable authentication on status page. Be sure to replace the password.*
+```diff
+listen stats $IP:$PORT
+    mode http
+    stats enable
+    stats uri /
++    stats realm HAProxy\ Statistics
++    stats auth admin:replacethispassword
+```
+*Add cookie config so that haproxy routes requests to the correct gear.*
+```diff
+listen express $IP:$PORT
++    cookie GEAR insert indirect nocache
+    option httpchk GET /
+    balance leastconn
+    server  filler $IP:$PORT backup
+```
+*If running a development/testing environment or if you only have one node, it might be useful to remove the heart-beat checks.*
+```diff
+listen express $IP:$PORT
+    cookie GEAR insert indirect nocache
+-    option httpchk GET /
+    balance leastconn
+    server  filler $IP:$PORT backup
+```
+
 ### Sample creation output
 ```sh
 $ rhc app create victims mongodb-2.2 python-2.7 --from-code git://github.com/victims/victims-server-openshift.git
