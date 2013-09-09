@@ -61,6 +61,16 @@ We use ```configs/victimsweb.build.env``` file for doing a few build time tricks
 3. Clean checkout: You can request this by setting ```VICTIMS_GIT_CLEAN=0``` to ```1```.
 
 #### HA-Proxy Configuration
+*Stop haproxy from dropping client connections*
+```diff
+    option http-server-close
++    option http-pretend-keepalive
+```
+*Forward client IP address*
+```diff
+-    #option forwardfor       except 127.0.0.0/8
++    option forwardfor       except 127.0.0.0/8
+```
 *Enable authentication on status page. Be sure to replace the password.*
 ```diff
 listen stats $IP:$PORT
