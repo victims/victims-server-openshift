@@ -30,6 +30,6 @@ setup(
     url='http://www.victi.ms',
 
     install_requires=[
-        'uwsgi',
+        'uwsgi>=1.9.19',
     ],
 )
