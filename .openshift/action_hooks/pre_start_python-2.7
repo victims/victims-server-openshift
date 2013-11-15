@@ -24,9 +24,10 @@ source ${VICTIMS_ENV}
 # This is nolonger required but kept for auto-removal of any custom/previous
 # installs
 # Uninstall the previous install of victims-web
-echo "$LOG_PREFIX Removing any older reference to victims-web"
-pip uninstall --yes victims-web >> ${PIP_LOG} 2>&1 \
-    || echo "$LOG_PREFIX victims-web not found. Skipping."
+if [[ $(pip list | grep victims-web) ]]; then
+    echo "$LOG_PREFIX Removing old reference to victims-web"
+    pip uninstall --yes victims-web >> ${PIP_LOG} 2>&1
+fi
 
 # Check if the upstream url has changed
 if [ -d ${VICTIMS_LOCAL_REPO} ]; then
