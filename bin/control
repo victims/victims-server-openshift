@@ -12,11 +12,24 @@ source ${OPENSHIFT_PYTHON_DIR}/virtenv/bin/activate
 UWSGI_PIDFILE=${OPENSHIFT_PYTHON_DIR}/run/uwsgi.pid
 CONFIGFILE=${OPENSHIFT_REPO_DIR}/uwsgi.ini
 
+function doubletap() {
+    echo "$LOG_PREFIX Double tapping to ensure kill"
+    killall -9 uwsgi
+}
+
 function stop()
 {
     if [ -f "$UWSGI_PIDFILE" ]; then
         echo "$LOG_PREFIX Stopping uWSGI"
         uwsgi --stop "$UWSGI_PIDFILE"
+
+        # wait till all workers are burried
+        echo "$LOG_PREFIX Waiting a few seconds for workers to be burried ..."
+        sleep 3
+
+        # confirm death
+        doubletap
+
         rm "$UWSGI_PIDFILE"
     else
         echo "$LOG_PREFIX No running UWSGI process"
@@ -37,8 +50,6 @@ function restart()
 {
     echo "$LOG_PREFIX Restarting uWSGI"
     stop
-    # wait till all workers are burried
-    sleep 2
     start
 }
 
