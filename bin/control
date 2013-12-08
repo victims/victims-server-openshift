@@ -14,7 +14,7 @@ CONFIGFILE=${OPENSHIFT_REPO_DIR}/uwsgi.ini
 
 function doubletap() {
     echo "$LOG_PREFIX Double tapping to ensure kill"
-    killall -9 uwsgi
+    killall -9 uwsgi || echo "$LOG_PREFIX No pulse, saving ammo"
 }
 
 function stop()
