@@ -5,40 +5,38 @@ This repo allows you to deploy a new instance of the victims-web server on opens
 
 ## Running on OpenShift
 ### Prerequisites
-1. You have a valid account with OpenShift
-2. You have followed the instructions at https://www.openshift.com/get-started
-3. You have *rhc* installed and ready
+1. You have a valid account with OpenShift https://www.openshift.com/get-started
 
-### Creating the app
-#### One Shot Deployment
-This is pretty straight forward, run the following command. The app should be deployed to ```http://victims-NAMESPACE.rhcloud.com```. See bottom for a sample output.
+### Create a new project
 ```sh
-rhc app create victims mongodb-2.2 rockmongo-1.1 python-2.7 --from-code git://github.com/victims/victims-server-openshift.git
+oc new-project victims
 ```
-_*Note:*_ The above can be used for development purposes and will be deployed on a shared gear. This cannot be used with ```--scaling``` as _rockmongo_ cannot be scaled. If you want to deploy with scaling enabled, use:
+
+### (Optional) Deploy a database
+It's recommended to use a MongoDB database hosted outside of Openshift. However for development purposes a templorary database can provisionsed inside Openshift using the provided template:
 ```sh
-rhc app create victims mongodb-2.2 python-2.7 --scaling --from-code git://github.com/victims/victims-server-openshift.git
+oc process -f mongodb-ephemeral.yaml | oc create -f -
 ```
-If you'd like to merge in any upstream changes as they are available, you need to configure remote/upstream. This can be done as follows:
-```sh
-git remote add upstream https://github.com/victims/victims-server-openshift.git
-```
-#### Alternative Deployment
-This can be useful if the *One Shot* option fails or if you want to configure the instance from build 1.
-```sh
-rhc app create victims mongodb-2.2 rockmongo-1.1 python-2.7
-cd victims
-git remote add upstream -m master git://github.com/victims/victims-server-openshift.git
-git pull -s recursive -X theirs upstream master
-# Make any configuration changes here and commit them.
-git push origin master
-```
-### Merging upstream changes
+### Pull the latest victims-web codebase
 Changes from upstream for the openshift wrapper app can be merged in and the app redeployed by executing:
 ```sh
-git pull --rebase upstream master
-git push origin master
+git clone --depth 1 git@github.com:victims/victims-web.git
 ```
+### Build the victims-web image
+```sh
+sudo docker build -t registry.starter-us-east-1.openshift.com/victims/victims-web victims-web
+```
+
+### Push the image into Openshift
+```sh
+sudo docker push registry.starter-us-east-1.openshift.com/victims/victims-web
+```
+
+### Create the app using image
+```sh
+oc new-app -e MONGODB_DB_HOST=mongodb.victims.svc victims-web --name=web
+```
+
 _Note:_ This requires remote/usptream to be configured. (See above)
 ### Importing data
 1. Get the app's SSH address by running ```rhc app show victims```
