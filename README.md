@@ -28,6 +28,23 @@ sudo docker build -t registry.starter-us-east-1.openshift.com/victims/victims-we
 ```
 
 ### Push the image into Openshift
+You'll need to login to the openshift docker registry using your token. The token can be obtained by first logging into Openshift:
+```sh
+oc login https://console.starter-us-east-1.openshift.com
+```
+
+Then obtain your token like so:
+```sh
+oc whoami -t
+```
+
+Then login to the docker registry:
+```sh
+docker login -u <openshift-username> -p <token> registry.starter-us-east-1.openshift.com
+```
+
+Push the build image to the registry:
+
 ```sh
 sudo docker push registry.starter-us-east-1.openshift.com/victims/victims-web
 ```
@@ -37,7 +54,6 @@ sudo docker push registry.starter-us-east-1.openshift.com/victims/victims-web
 oc new-app -e MONGODB_DB_HOST=mongodb.victims.svc victims-web --name=web
 ```
 
-_Note:_ This requires remote/usptream to be configured. (See above)
 ### Importing data
 1. Get the app's SSH address by running ```rhc app show victims```
 2. SSH into the server.
