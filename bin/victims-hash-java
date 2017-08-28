@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-VICTIMS_JAR=${OPENSHIFT_REPO_DIR}/libs/java-hash.jar
+VICTIMS_JAR=${PWD}/libs/java-hash.jar
 
 if [ -f ${VICTIMS_JAR} ]; then
     java -jar $VICTIMS_JAR $@
