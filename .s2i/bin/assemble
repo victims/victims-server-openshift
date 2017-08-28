@@ -1,0 +1,4 @@
+#!/bin/bash
+git clone --depth 1 https://github.com/victims/victims-web.git
+cd victims-web
+exec /usr/libexec/s2i/assemble

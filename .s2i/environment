@@ -1,2 +1,2 @@
 APP_FILE=application.py
-VICTIMS_CONFIG=config.py
+VICTIMS_CONFIG=victimsconfig.py
