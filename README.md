@@ -30,6 +30,13 @@ oc process -f mongodb-ephemeral.yaml | oc create -f -
 ```sh
 s2i build -c . centos/python-27-centos7 registry.starter-us-east-1.openshift.com/victims/victims-web
 ```
+*The ''-c' argument tells s2i to use the local copy, not one stored in the local git repository*
+
+### Test the build image
+It's now possible to run the image locally to test any changes:
+```sh
+docker run -it registry.starter-us-east-1.openshift.com/victims/victims-web
+```
 
 ### Push the image into Openshift
 You'll need to login to the openshift docker registry using your token. The token can be obtained by first logging into Openshift:
