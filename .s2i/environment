@@ -1,2 +1,2 @@
 APP_FILE=application.py
-VICTIMS_CONFIG=victimsconfig.py
+VICTIMS_CONFIG=/opt/app-root/src/victimsconfig.py

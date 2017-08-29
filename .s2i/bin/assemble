@@ -1,4 +1,5 @@
 #!/bin/bash
+mv /tmp/src/* ./
 git clone --depth 1 https://github.com/victims/victims-web.git
 cd victims-web
 rm -rf .git
