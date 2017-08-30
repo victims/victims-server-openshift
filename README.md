@@ -17,14 +17,9 @@ It's recommended to use a MongoDB database hosted outside of Openshift. However 
 ```sh
 oc process -f mongodb-ephemeral.yaml | oc create -f -
 ```
-### Pull the latest victims-web codebase
-Changes from upstream for the openshift wrapper app can be merged in and the app redeployed by executing:
-```sh
-git clone --depth 1 git@github.com:victims/victims-web.git
-```
 ### Build the victims-web image
 ```sh
-sudo docker build -t registry.starter-us-east-1.openshift.com/victims/victims-web victims-web
+s2i build -c . centos/python-27-centos7 registry.starter-us-east-1.openshift.com/victims/victims-web 
 ```
 
 ### Push the image into Openshift
@@ -32,6 +27,7 @@ You'll need to login to the openshift docker registry using your token. The toke
 ```sh
 oc login https://console.starter-us-east-1.openshift.com
 ```
+*In this case we're using Openshift online, however if you have a custom install of Openshift Container Platform, please use that URL instead of starter-us-east-1.openshift.com*
 
 Then obtain your token like so:
 ```sh
@@ -51,7 +47,7 @@ sudo docker push registry.starter-us-east-1.openshift.com/victims/victims-web
 
 ### Create the app using image
 ```sh
-oc new-app -e MONGODB_DB_HOST=mongodb.victims.svc victims-web --name=web
+oc new-app -e MONGODB_DB_HOST=<mongodb-hostname> victims-web -e MONGODB_DB_USERNAME=<mongodb-username> -e MONGODB_DB_PASSWORD=<mongodb-password> --name=web
 ```
 
 ### Importing data
