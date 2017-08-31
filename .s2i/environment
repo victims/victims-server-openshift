@@ -1,3 +1,3 @@
-APP_SCRIPT=victims-web-server
-VICTIMS_CONFIG=victimsconfig.py
+APP_SCRIPT=/opt/app-root/src/victims-web-server
+VICTIMS_CONFIG=/opt/app-root/src/victimsconfig.py
 
