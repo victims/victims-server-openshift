@@ -19,7 +19,7 @@ TESTING = False
 SECRET_KEY = b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
 
 # File upload
-UPLOAD_FOLDER = join(VICTIMS_BASE_DIR, "uploads")
+UPLOAD_FOLDER = join(VICTIMS_BASE_DIR, 'uploads')
 ALLOWED_EXTENSIONS = set(['egg', 'jar', 'gem'])
 
 # File download
@@ -30,10 +30,10 @@ CACHE_DIR = join(VICTIMS_BASE_DIR, 'cache')
 # MongoDB Configuration
 MONGODB_SETTINGS = {
     'DB': environ.get('VICTIMS_DB', 'victims'),
-    'HOST': environ.get('MONGODB_HOST', 'mongodb.victims.svc'),
+    'HOST': environ.get('MONGODB_DB_HOST', 'mongodb.victims.svc'),
     'PORT': 27017,
-    'USERNAME': environ.get('MONGODB_USERNAME', ''),
-    'PASSWORD': environ.get('MONGODB_PASSWORD', '')
+    'USERNAME': environ.get('MONGODB_DB_USERNAME', ''),
+    'PASSWORD': environ.get('MONGODB_DB_PASSWORD', '')
 }
 
 # Hashing commands for each group

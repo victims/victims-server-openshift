@@ -6,6 +6,12 @@ This repo allows you to deploy a new instance of the victims-web server on opens
 ## Running on OpenShift
 ### Prerequisites
 1. You have a valid account with OpenShift https://www.openshift.com/get-started
+2. You have the s2i tool installed locally https://github.com/openshift/source-to-image
+
+### Log in to Openshift
+```sh
+oc login https://console.starter-us-east-1.openshift.com
+```
 
 ### Create a new project
 ```sh
@@ -13,13 +19,23 @@ oc new-project victims
 ```
 
 ### (Optional) Deploy a database
-It's recommended to use a MongoDB database hosted outside of Openshift. However for development purposes a templorary database can provisionsed inside Openshift using the provided template:
+It's recommended to use a MongoDB database hosted outside of Openshift. However for development purposes a temporary database can provisionsed inside Openshift using the provided template:
 ```sh
 oc process -f mongodb-ephemeral.yaml | oc create -f -
 ```
-### Build the victims-web image
+*Due to the authentication mechanism being updated to SCRAM-SHA1 in Mongo 3.x, we have a requirement to use an earlier version of MongoDB, eg. 2.6*
+*The emphemeral template doesn't use permanent storage with a persistent volume, all data will be lost when the pod is migrated!*
+
+### Build the victims-web image with s2i tool
 ```sh
-s2i build -c . centos/python-27-centos7 registry.starter-us-east-1.openshift.com/victims/victims-web 
+s2i build -c . centos/python-27-centos7 registry.starter-us-east-1.openshift.com/victims/victims-web
+```
+*The ''-c' argument tells s2i to use the local copy, not one stored in the local git repository*
+
+### Test the build image
+It's now possible to run the image locally to test any changes:
+```sh
+docker run -it registry.starter-us-east-1.openshift.com/victims/victims-web
 ```
 
 ### Push the image into Openshift
