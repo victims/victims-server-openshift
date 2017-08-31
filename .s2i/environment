@@ -1,2 +1,2 @@
-APP_FILE=application.py
+APP_SCRIPT=victims-web-server
 VICTIMS_CONFIG=victimsconfig.py
