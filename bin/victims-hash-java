@@ -1,7 +1,5 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-VICTIMS_JAR=${PWD}/libs/java-hash.jar
+source /opt/app-root/bin/activate
 
-if [ -f ${VICTIMS_JAR} ]; then
-    java -jar $VICTIMS_JAR $@
-fi
+/opt/app-root/src/victims-hash/bin/process.sh $1
