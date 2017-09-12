@@ -43,3 +43,5 @@ HASHING_COMMANDS = {
     'java': VICTIMS_BASE_DIR + 'src/bin/victims-hash-java {archive!s}',
 }
 
+PREFERRED_URL_SCHEME = 'https'
+
